@@ -2,3 +2,8 @@
 \.vscode/
 
 __pycache__/
+
+# virtualenv folders
+\bin/
+\include/
+\lib/
