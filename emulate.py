@@ -18,10 +18,9 @@ def main():
     kbListener.start()
 
     env = gym.make(gameList[0])
-    agent = MultilayerPerceptron(env.observation_space)
-    
+
     env.reset()
-    observation, _, done, _ = env.step(env.action_space.sample())
+    _, _, done, _ = env.step(env.action_space.sample())
     env.render()
     lastRender = time.time()
     try:
@@ -32,12 +31,7 @@ def main():
             currPeriod = time.time() - lastRender
             if currPeriod > framePeriod:
                 lastRender = time.time()
-                observation, _, done, _ = env.step(action)
-                agent.train(observation, joypad.actionButtons())
-                print('{} Autoplay:{}, FPS:{}'.format(joypad.actionButtons(),
-                                                 joypad.autoplay,
-                                                 np.round(1/currPeriod)))
-                print(agent.action(observation))
+                _, _, done, _ = env.step(action)
                 if done:
                     env.reset()
                 env.render()
