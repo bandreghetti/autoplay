@@ -18,7 +18,6 @@ def main():
     kbListener.start()
 
     env = gym.make(gameList[0])
-
     env.reset()
     _, _, done, _ = env.step(env.action_space.sample())
     env.render()
