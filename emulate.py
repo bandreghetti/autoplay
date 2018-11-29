@@ -5,7 +5,6 @@ import time
 import pynput.keyboard as kb
 from joypad import Joypad
 from games import gameList
-from agents import MultilayerPerceptron
 import numpy as np
 
 FPS = 20.0
