@@ -30,6 +30,8 @@ def main():
 
     if topology == "MLP":
         agent = agents.MLP(env)
+    elif topology == "Conv":
+        agent = agents.Conv(env)    
     else:
         print("Available topologies:")
         print("  - MLP")
@@ -58,8 +60,18 @@ def main():
             framesPlayed += 1
             episodeFrames += 1
             action = agent.action(observation)
-            new_observation, reward, done, _ = env.step(action)
+            new_observation, reward, done, info_lives = env.step(action)
+         
+            """
+            time_factor = 0.99 + 0.01*episodeFrames
+         	
+            lives=info_lives['ale.lives']
+            reward = reward*time_factor*(lives/4)
+            """
+         
             total_reward += reward
+            #print(info_lives)
+            #print("Reward: " + str(reward))
             if np.random.rand() < train_chance:
                 agent.train(observation, new_observation, reward, done)
 
