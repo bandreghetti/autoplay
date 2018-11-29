@@ -38,14 +38,18 @@ def main():
 
             observation = resize(observation, (128, 128), anti_aliasing=True, mode='constant')
 
-            if topology == 'MLP':
-                flatScreen = observation.reshape(1, -1)
-                output = model.predict(flatScreen)
-            elif topology == 'Conv':
-                screen = observation.reshape((1, 128, 128, 3))
-                output = model.predict(screen)
+            if np.random.rand() < 0.01:
+                action = np.random.randint(env.action_space.n)
+            else:
+                if topology == 'MLP':
+                    flatScreen = observation.reshape(1, -1)
+                    output = model.predict(flatScreen)
+                elif topology == 'Conv':
+                    screen = observation.reshape((1, 128, 128, 3))
+                    output = model.predict(screen)
+                action = np.argmax(output)
 
-            action = np.argmax(output)
+
 
             observation, _, done, _ = env.step(action)
 
