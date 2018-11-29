@@ -1,27 +1,6 @@
 from pynput.keyboard import Key
 import numpy as np
 
-actionMeaning = {
-    0 : "NOOP",
-    1 : "FIRE",
-    2 : "UP",
-    3 : "RIGHT",
-    4 : "LEFT",
-    5 : "DOWN",
-    6 : "UPRIGHT",
-    7 : "UPLEFT",
-    8 : "DOWNRIGHT",
-    9 : "DOWNLEFT",
-    10 : "UPFIRE",
-    11 : "RIGHTFIRE",
-    12 : "LEFTFIRE",
-    13 : "DOWNFIRE",
-    14 : "UPRIGHTFIRE",
-    15 : "UPLEFTFIRE",
-    16 : "DOWNRIGHTFIRE",
-    17 : "DOWNLEFTFIRE",
-}
-
 EXIT          = -1
 NOOP          = 0
 FIRE          = 1
@@ -43,17 +22,24 @@ DOWNRIGHTFIRE = 16
 DOWNLEFTFIRE  = 17
 
 class Joypad():
-    def __init__(self):
-        self.action = NOOP
+    def __init__(self, env):
+        self.action2num = {}
+        self.action_meanings = env.unwrapped.get_action_meanings()
+        self.n_actions = env.action_space.n
+        for idx, action in enumerate(self.action_meanings):
+            self.action2num[action] = idx
+        self.num2action = {v: k for k, v in self.action2num.items()}
+        self.action = 0
+        self.env_action = 0
         self.lastKey = None
         self.autoplay = False
-    
+
     def actionString(self):
-        return actionMeaning[self.action]
+        return self.num2action[self.env_action]
 
     def actionOneHot(self):
-        ret = np.zeros(18, dtype=np.float64)
-        np.put(ret, self.action, 1)
+        ret = np.zeros(self.n_actions, dtype=np.float64)
+        np.put(ret, self.env_action, 1)
         return ret
 
     def actionButtons(self):
@@ -113,12 +99,12 @@ class Joypad():
             np.put(ret, bDOWN, 1)
             np.put(ret, bLEFT, 1)
             np.put(ret, bFIRE, 1)
-            
+
         return ret
 
     def on_press(self, key):
         self.lastKey = key
-        if(key == Key.space): 
+        if(key == Key.space):
             if  (self.action == NOOP):
                 self.action = FIRE
             elif(self.action == UP):
@@ -267,3 +253,42 @@ class Joypad():
             elif(self.action == DOWNLEFTFIRE):
                 self.action = LEFTFIRE
 
+    def set_env_action(self):
+        if self.action == NOOP and "NOOP" in self.action2num:
+            self.env_action = self.action2num["NOOP"]
+        elif self.action == FIRE and "FIRE" in self.action2num:
+            self.env_action = self.action2num["FIRE"]
+        elif self.action == UP and "UP" in self.action2num:
+            self.env_action = self.action2num["UP"]
+        elif self.action == RIGHT and "RIGHT" in self.action2num:
+            self.env_action = self.action2num["RIGHT"]
+        elif self.action == LEFT and "LEFT" in self.action2num:
+            self.env_action = self.action2num["LEFT"]
+        elif self.action == DOWN and "DOWN" in self.action2num:
+            self.env_action = self.action2num["DOWN"]
+        elif self.action == UPRIGHT and "UPRIGHT" in self.action2num:
+            self.env_action = self.action2num["UPRIGHT"]
+        elif self.action == UPLEFT and "UPLEFT" in self.action2num:
+            self.env_action = self.action2num["UPLEFT"]
+        elif self.action == DOWNRIGHT and "DOWNRIGHT" in self.action2num:
+            self.env_action = self.action2num["DOWNRIGHT"]
+        elif self.action == DOWNLEFT and "DOWNLEFT" in self.action2num:
+            self.env_action = self.action2num["DOWNLEFT"]
+        elif self.action == UPFIRE and "UPFIRE" in self.action2num:
+            self.env_action = self.action2num["UPFIRE"]
+        elif self.action == RIGHTFIRE and "RIGHTFIRE" in self.action2num:
+            self.env_action = self.action2num["RIGHTFIRE"]
+        elif self.action == LEFTFIRE and "LEFTFIRE" in self.action2num:
+            self.env_action = self.action2num["LEFTFIRE"]
+        elif self.action == DOWNFIRE and "DOWNFIRE" in self.action2num:
+            self.env_action = self.action2num["DOWNFIRE"]
+        elif self.action == UPRIGHTFIRE and "UPRIGHTFIRE" in self.action2num:
+            self.env_action = self.action2num["UPRIGHTFIRE"]
+        elif self.action == UPLEFTFIRE and "UPLEFTFIRE" in self.action2num:
+            self.env_action = self.action2num["UPLEFTFIRE"]
+        elif self.action == DOWNRIGHTFIRE and "DOWNRIGHTFIRE" in self.action2num:
+            self.env_action = self.action2num["DOWNRIGHTFIRE"]
+        elif self.action == DOWNLEFTFIRE and "DOWNLEFTFIRE" in self.action2num:
+            self.env_action = self.action2num["DOWNLEFTFIRE"]
+        else:
+            self.env_action = 0

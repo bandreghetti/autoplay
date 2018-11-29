@@ -10,13 +10,16 @@ import numpy as np
 FPS = 20.0
 framePeriod = 1.0/FPS
 
-joypad = Joypad()
+
 
 def main():
+    env = gym.make(gameList[0])
+
+    joypad = Joypad(env)
+
     kbListener = kb.Listener(on_press=joypad.on_press, on_release=joypad.on_release)
     kbListener.start()
 
-    env = gym.make(gameList[0])
     env.reset()
     _, _, done, _ = env.step(env.action_space.sample())
     env.render()
