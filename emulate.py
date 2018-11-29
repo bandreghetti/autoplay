@@ -10,8 +10,6 @@ import numpy as np
 FPS = 20.0
 framePeriod = 1.0/FPS
 
-
-
 def main():
     env = gym.make(gameList[0])
 

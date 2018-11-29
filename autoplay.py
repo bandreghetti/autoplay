@@ -36,11 +36,16 @@ def main():
             print('FPS: {}'.format(np.round(1/currPeriod)))
             env.render()
 
+            observation = resize(observation, (128, 128), anti_aliasing=True, mode='constant')
+
             if topology == 'MLP':
-                observation = resize(observation, (100, 100), anti_aliasing=True, mode='constant')
                 flatScreen = observation.reshape(1, -1)
                 output = model.predict(flatScreen)
-                action = np.argmax(output)
+            elif topology == 'Conv':
+                screen = observation.reshape((1, 128, 128, 3))
+                output = model.predict(screen)
+
+            action = np.argmax(output)
 
             observation, _, done, _ = env.step(action)
 

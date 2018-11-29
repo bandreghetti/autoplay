@@ -38,6 +38,17 @@ def load(game, topology):
         weightsPath = os.path.join(modelName, 'weights.h5')
         model.load_weights(weightsPath)
         print("Loaded model from disk")
+    elif topology == "Conv":
+        # load json and create model
+        json_path = os.path.join(modelName, 'model.json')
+        with open(json_path, 'r') as json_file:
+            loaded_model_json = json_file.read()
+            json_file.close()
+        model = model_from_json(loaded_model_json)
+        # load weights into new model
+        weightsPath = os.path.join(modelName, 'weights.h5')
+        model.load_weights(weightsPath)
+        print("Loaded model from disk")
     else:
         print("Available topologies:")
         print("  - MLP")
@@ -128,7 +139,7 @@ class MLP():
         self.model.save_weights(os.path.join(modelName, 'weights.h5'))
         np.save(os.path.join(modelName, 'history_x.npy'), self.history_x)
         np.save(os.path.join(modelName, 'history_y.npy'), self.history_y)
-        
+
 class Conv():
     def __init__(self, env):
         self.frame_size = (128, 128)
@@ -216,4 +227,4 @@ class Conv():
         # serialize weights to HDF5
         self.model.save_weights(os.path.join(modelName, 'weights.h5'))
         np.save(os.path.join(modelName, 'history_x.npy'), self.history_x)
-        np.save(os.path.join(modelName, 'history_y.npy'), self.history_y)        
+        np.save(os.path.join(modelName, 'history_y.npy'), self.history_y)
