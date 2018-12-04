@@ -31,7 +31,7 @@ def main():
     if topology == "MLP":
         agent = agents.MLP(env)
     elif topology == "Conv":
-        agent = agents.Conv(env)    
+        agent = agents.Conv(env)
     else:
         print("Available topologies:")
         print("  - MLP")

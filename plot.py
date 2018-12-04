@@ -8,16 +8,14 @@ from matplotlib import pyplot as plt
 
 def main():
     if len(sys.argv) <= 1:
-        print("Usage: ./plot.py <topology>")
+        print("Usage: ./plot.py <foldername>")
         print("Example: ./plot.py MLP")
         exit()
 
-    topology = sys.argv[1]
+    foldername = sys.argv[1]
 
-    game = gameList[0]
-
-    history_x = np.load(os.path.join(game + '_' + topology, 'history_x.npy'))
-    history_y = np.load(os.path.join(game + '_' + topology, 'history_y.npy'))
+    history_x = np.load(os.path.join(foldername, 'history_x.npy'))
+    history_y = np.load(os.path.join(foldername, 'history_y.npy'))
 
     plt.plot(history_x, history_y)
     plt.show()

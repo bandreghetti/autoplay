@@ -1,5 +1,6 @@
 from keras.models import Sequential, load_model, model_from_json
 from keras.layers import Dense, Conv2D, MaxPooling2D, Conv3D, MaxPooling3D, Flatten
+from keras.optimizers import SGD
 import numpy as np
 from skimage.transform import resize
 import os
@@ -75,12 +76,14 @@ class MLP():
         self.history_x = [0]
         self.history_y = [0]
 
+        sgd = SGD(lr=0.01)
+
         # Configure model
         self.model = Sequential()
-        self.model.add(Dense(units=512, activation='sigmoid', kernel_initializer="uniform", input_dim=self.input_size))
-        self.model.add(Dense(units=64, activation='sigmoid', kernel_initializer="uniform"))
-        self.model.add(Dense(units=self.output_size, activation='softmax', kernel_initializer="uniform"))
-        self.model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
+        self.model.add(Dense(units=64, activation='relu', kernel_initializer="uniform", input_dim=self.input_size))
+        self.model.add(Dense(units=32, activation='relu', kernel_initializer="uniform"))
+        self.model.add(Dense(units=self.output_size, activation='relu', kernel_initializer="uniform"))
+        self.model.compile(optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy'])
 
     def getWeights(self):
         return self.model.get_weights()
@@ -109,8 +112,7 @@ class MLP():
         if done:
             target[action] = reward
         else:
-            new_observation = resize(new_observation, self.frame_size, anti_aliasing=True, mode='constant')
-            Q_new = self.model.predict(new_observation.reshape(1, -1))
+            Q_new = self.Q(new_observation)
             target[action] = reward + self.gamma * np.max(Q_new)
         self.batch_targets[self.sample_idx] = target
 
@@ -120,8 +122,8 @@ class MLP():
             # print('Epsilon: {}'.format(self.epsilon))
             self.model.train_on_batch(self.batch_inputs, self.batch_targets)
             self.sample_idx = 0
-            if self.epsilon > 0.2:
-                self.epsilon = 0.99*self.epsilon
+            if self.epsilon > 1:
+                self.epsilon -= 0.00001
 
     def add_history(self, time, reward):
         print('After training for {0:.2f} hours, got {1} reward in the last episode'.format(time, reward))
