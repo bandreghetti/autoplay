@@ -9,7 +9,6 @@ import sys
 
 FPS = 20.0
 framePeriod = 1.0/FPS
-batch_size = 32
 train_chance = 0.2
 
 def main():
@@ -61,14 +60,14 @@ def main():
             episodeFrames += 1
             action = agent.action(observation)
             new_observation, reward, done, info_lives = env.step(action)
-         
+
             """
             time_factor = 0.99 + 0.01*episodeFrames
-         	
+
             lives=info_lives['ale.lives']
             reward = reward*time_factor*(lives/4)
             """
-         
+
             total_reward += reward
             #print(info_lives)
             #print("Reward: " + str(reward))
